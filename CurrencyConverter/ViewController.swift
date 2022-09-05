@@ -22,10 +22,15 @@ class ViewController: UIViewController {
 
     @IBAction func getRatesClicked(_ sender: Any) {
         
-        let url = URL(string:"http://data.fixer.io/api/latest?access_key=4nRlNOZXvTyTVIzmfDKAX6wkaxwGU9c0")!
-        let session = URLSession.shared
-        let task = session.dataTask(with: url) { data, response, error in
-            if error == nil {
+        // yeah, I know, don't check in API key. This will get deleted in the future.
+        let apiKey = "4nRlNOZXvTyTVIzmfDKAX6wkaxwGU9c0"
+        let url = URL(string: "https://api.apilayer.com/fixer/latest?apikey=\(apiKey)")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            
+            if error != nil {
                 let alert = UIAlertController(title: "Error", message: error?.localizedDescription, preferredStyle: .alert)
                 let button = UIAlertAction(title: "OK", style: UIAlertAction.Style.default)
                 alert.addAction(button)
@@ -34,9 +39,14 @@ class ViewController: UIViewController {
             }
             
             if data == nil {
+                print("request made, no data recieved")
                 return
             }
+            
+            print(String(data: data!, encoding: .utf8)!)
         }
+        
+        task.resume()
     }
 }
 
